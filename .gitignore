@@ -16,6 +16,11 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+**/*.xcworkspace/**
+*.xctimeline
+
+# OSX junk
+.DS_Store
 
 # CocoaPods
 #
@@ -24,3 +29,6 @@ DerivedData
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
 # Pods/
+
+# Required Forecast.IO API key must not be checked into the repository.
+ForecastIOAPIKey.swift

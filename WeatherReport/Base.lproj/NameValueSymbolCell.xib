@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6724" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6711"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="nameValueSymbolCell" rowHeight="36" id="kWv-wh-ckX" customClass="NameValueSymbolCell" customModule="WeatherReport" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="36"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kWv-wh-ckX" id="kL8-9P-bbT">
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="compass" translatesAutoresizingMaskIntoConstraints="NO" id="5Qs-1D-6mN">
+                        <rect key="frame" x="288" y="6" width="24" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="aSd-kT-Yyq"/>
+                            <constraint firstAttribute="height" constant="24" id="sgU-VX-AYU"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Value" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eyr-hN-Ftj">
+                        <rect key="frame" x="116" y="11" width="164" height="14"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sv0-A9-vk9">
+                        <rect key="frame" x="8" y="8" width="100" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="100" id="0qy-TC-gNd"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="5Qs-1D-6mN" firstAttribute="centerY" secondItem="eyr-hN-Ftj" secondAttribute="centerY" id="6de-br-Kf5"/>
+                    <constraint firstItem="5Qs-1D-6mN" firstAttribute="trailing" secondItem="kL8-9P-bbT" secondAttribute="trailingMargin" id="CE2-vj-wHk"/>
+                    <constraint firstItem="eyr-hN-Ftj" firstAttribute="leading" secondItem="Sv0-A9-vk9" secondAttribute="trailing" constant="8" symbolic="YES" id="F2N-cj-mRz"/>
+                    <constraint firstItem="Sv0-A9-vk9" firstAttribute="centerY" secondItem="eyr-hN-Ftj" secondAttribute="centerY" id="R77-cS-ayk"/>
+                    <constraint firstItem="Sv0-A9-vk9" firstAttribute="leading" secondItem="kL8-9P-bbT" secondAttribute="leadingMargin" id="RvO-j4-YmV"/>
+                    <constraint firstItem="Sv0-A9-vk9" firstAttribute="top" secondItem="kL8-9P-bbT" secondAttribute="topMargin" id="VVP-S8-Nat"/>
+                    <constraint firstItem="5Qs-1D-6mN" firstAttribute="top" secondItem="kL8-9P-bbT" secondAttribute="topMargin" constant="-2" id="bM7-WH-qC3"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="Sv0-A9-vk9" secondAttribute="bottom" constant="-0.5" id="lLJ-Ie-2PL"/>
+                    <constraint firstItem="5Qs-1D-6mN" firstAttribute="leading" secondItem="eyr-hN-Ftj" secondAttribute="trailing" constant="8" symbolic="YES" id="nTf-y8-x4e"/>
+                    <constraint firstItem="eyr-hN-Ftj" firstAttribute="top" secondItem="kL8-9P-bbT" secondAttribute="topMargin" constant="3" id="z3k-KW-DlD"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="uiName" destination="Sv0-A9-vk9" id="RTH-jG-JUV"/>
+                <outlet property="uiSymbol" destination="5Qs-1D-6mN" id="B2o-1a-PzW"/>
+                <outlet property="uiValue" destination="eyr-hN-Ftj" id="iou-YA-cnU"/>
+            </connections>
+            <point key="canvasLocation" x="83" y="195"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="compass" width="120" height="120"/>
+    </resources>
+</document>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6724" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6711"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="WeatherReport" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="g9V-aJ-has">
+                                <rect key="frame" x="16" y="73" width="343" height="561"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="CB2-bu-5Eo"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="Nnd-qb-BBd"/>
+                                </connections>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="25L-Dq-Crl">
+                                <rect key="frame" x="231" y="631" width="128" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="MmY-ZM-wuH"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="Powered by Forecast">
+                                    <color key="titleColor" red="0.043137254901960784" green="0.37647058823529411" blue="0.99607843137254903" alpha="0.75" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="MmY-ZM-wuH"/>
+                                    </mask>
+                                </variation>
+                                <connections>
+                                    <action selector="poweredByForecastButtonAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="xUw-ms-TKh"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Place to search for..." minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zzI-tU-3sQ">
+                                <rect key="frame" x="16" y="35" width="267" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="search"/>
+                                <connections>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="4rM-Fj-fTZ"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gCD-hJ-Xbu">
+                                <rect key="frame" x="291" y="35" width="30" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="30" id="5eM-bO-ePr"/>
+                                    <constraint firstAttribute="height" constant="30" id="cv5-It-rZo"/>
+                                </constraints>
+                                <state key="normal" image="UIButtonBarSearch"/>
+                                <connections>
+                                    <action selector="searchButtonAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="xwC-e9-aiD"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" alpha="0.90000000000000013" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-qx-xsX">
+                                <rect key="frame" x="329" y="35" width="30" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="44" id="5td-Da-lS7"/>
+                                    <constraint firstAttribute="width" constant="30" id="On8-vl-hEL"/>
+                                    <constraint firstAttribute="height" constant="30" id="hCE-9B-s9z"/>
+                                </constraints>
+                                <state key="normal" image="UIButtonBarLocate"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="5td-Da-lS7"/>
+                                    </mask>
+                                </variation>
+                                <connections>
+                                    <action selector="currentLocationButtonAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="QQT-JA-cNf"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="0.66561496257781982" green="0.83165550231933594" blue="0.86481362581253052" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="g9V-aJ-has" secondAttribute="bottom" constant="33" id="0M3-R6-Ntf"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="2z0-J0-2K0"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="3n3-Oa-Md7"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="top" secondItem="gCD-hJ-Xbu" secondAttribute="bottom" constant="8" id="6a1-r7-xKv"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="trailing" secondItem="25L-Dq-Crl" secondAttribute="trailing" id="89c-R3-fc2"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="top" secondItem="zzI-tU-3sQ" secondAttribute="bottom" constant="8" id="9oQ-p8-MW3"/>
+                            <constraint firstItem="25L-Dq-Crl" firstAttribute="top" secondItem="g9V-aJ-has" secondAttribute="bottom" constant="-3" id="A2A-Un-0yv"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="trailing" secondItem="wIF-qx-xsX" secondAttribute="trailing" id="D3D-kY-DUN"/>
+                            <constraint firstItem="25L-Dq-Crl" firstAttribute="trailing" secondItem="g9V-aJ-has" secondAttribute="trailing" id="EGC-DO-CSb"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="25L-Dq-Crl" secondAttribute="bottom" constant="8" symbolic="YES" id="G0i-EN-MIb"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="TfX-1v-N1u"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="top" secondItem="wIF-qx-xsX" secondAttribute="bottom" constant="8" id="al9-vq-jyD"/>
+                            <constraint firstItem="wIF-qx-xsX" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="bQa-9u-Qfe"/>
+                            <constraint firstItem="wIF-qx-xsX" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="cyG-f7-5o1"/>
+                            <constraint firstItem="zzI-tU-3sQ" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="haL-sw-ngd"/>
+                            <constraint firstItem="gCD-hJ-Xbu" firstAttribute="leading" secondItem="zzI-tU-3sQ" secondAttribute="trailing" constant="8" id="lYy-L7-Lr2"/>
+                            <constraint firstItem="25L-Dq-Crl" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="nRi-Bt-58g"/>
+                            <constraint firstItem="25L-Dq-Crl" firstAttribute="leading" secondItem="g9V-aJ-has" secondAttribute="leading" id="ofs-lE-WAT"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="25L-Dq-Crl" secondAttribute="bottom" constant="8" id="snm-2T-96Y"/>
+                            <constraint firstItem="wIF-qx-xsX" firstAttribute="leading" secondItem="gCD-hJ-Xbu" secondAttribute="trailing" constant="8" id="v0x-tO-gUb"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="top" secondItem="wIF-qx-xsX" secondAttribute="bottom" constant="8" symbolic="YES" id="wFu-4Q-zIZ"/>
+                            <constraint firstItem="g9V-aJ-has" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="53" id="wka-zb-wnz"/>
+                            <constraint firstItem="25L-Dq-Crl" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="zBq-aa-HtE"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="2z0-J0-2K0"/>
+                                <exclude reference="89c-R3-fc2"/>
+                                <exclude reference="D3D-kY-DUN"/>
+                                <exclude reference="wFu-4Q-zIZ"/>
+                                <exclude reference="cyG-f7-5o1"/>
+                                <exclude reference="0M3-R6-Ntf"/>
+                                <exclude reference="G0i-EN-MIb"/>
+                                <exclude reference="EGC-DO-CSb"/>
+                                <exclude reference="ofs-lE-WAT"/>
+                                <exclude reference="zBq-aa-HtE"/>
+                            </mask>
+                        </variation>
+                    </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="uiPropertyTable" destination="g9V-aJ-has" id="R4k-bK-MNA"/>
+                        <outlet property="uiSearchText" destination="zzI-tU-3sQ" id="aXy-z0-S2C"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="527.5" y="399.5"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="UIButtonBarLocate" width="23" height="23"/>
+        <image name="UIButtonBarSearch" width="18" height="18"/>
+    </resources>
+</document>
