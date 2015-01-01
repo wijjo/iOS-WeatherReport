@@ -17,7 +17,7 @@ class NameValueSymbolCell : UITableViewCell {
         super.init(coder: aDecoder)
     }
     
-    func loadData(item: WeatherItem, logger: SharedLogger) {
+    func loadData(item: WeatherItem, logger: SC_LoggerInterface) {
         self.uiName.text = "\(item.label):"
         self.uiValue.text = item.text
         var image: UIImage?

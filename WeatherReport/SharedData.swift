@@ -36,24 +36,15 @@ class SharedDataSingleton {
 }
 
 /**
- * Logging interface.
- */
-protocol SharedLogger {
-
-    func info(message: String)
-    func error(message: String)
-    func debug(message: String)
-}
-
-/**
  * The external interface used by view controllers to access shared data.
  */
-protocol SharedDataInterface: SharedLogger {
+protocol SharedDataInterface {
 
     //=== Properties
 
     var state: SavedState { get }
     var weatherItems: [WeatherItem] { get }
+    var logger: SC_LoggerInterface! { get }
 
     //=== Methods
 
@@ -161,28 +152,20 @@ class SavedState: NSObject {
 /**
  * Shared data implementation class. Not for external consumption.
  */
-class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate {
+class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SC_LocationDelegate, SC_LoggerDelegate {
 
     var delegates = [SharedDataDelegate]()
     var weatherUpdateTimer: NSTimer?
     var weatherSource: WeatherSource!
 
-    // Initialize and provide a location manager on demand, if needed.
-    var locationManagerCached: CLLocationManager?
-    var locationManager: CLLocationManager {
-        if self.locationManagerCached == nil {
-            self.locationManagerCached = CLLocationManager()
-            self.locationManagerCached!.delegate = self
-            self.locationManagerCached!.desiredAccuracy = kCLLocationAccuracyBest
-            self.locationManagerCached!.requestWhenInUseAuthorization()
-        }
-        return self.locationManagerCached!
-    }
+    var location: SC_Location!
 
     // Private constructor used only by SharedDataSingleton.get().
     private override init() {
         super.init()
-        self.weatherSource = ForecastIO(logger: self)
+        self.logger = SC_Logger(delegate: self)
+        self.location = SC_Location(delegate: self, logger: self.logger)
+        self.weatherSource = ForecastIO(logger: self.logger)
     }
 
     //TODO: Only load once for multiple views?
@@ -190,15 +173,15 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate {
         let userDefs = NSUserDefaults.standardUserDefaults()
         if let dataRaw: AnyObject = userDefs.objectForKey("SavedState") {
             if let dataDict = dataRaw as? NSDictionary {
-                self.debug("Loaded saved data.")
+                self.logger.debug("Loaded saved data.")
                 self.state = SavedState(fromPersistentData: dataDict)
                 self.weatherSource.location = self.state.placemark?.location
-                self.updatePlace(self.state.placemark, error: nil)
+                self.handlePlaceUpdate(self.state.placemark, error: nil)
             } else {
-                self.info("Ignored bad saved state data.")
+                self.logger.info("Ignored bad saved state data.")
             }
         } else {
-            self.info("Saved state data not found.")
+            self.logger.info("Saved state data not found.")
         }
     }
 
@@ -211,6 +194,7 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate {
 
     var state = SavedState()
     var weatherItems: [WeatherItem] = []
+    let logger: SC_LoggerInterface!
 
     func updateWeather() {
         // Start the timer on the first update.
@@ -222,34 +206,36 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate {
                 userInfo: nil,
                 repeats: true)
         }
-        self.debug("Requesting weather...")
+        self.logger.debug("Requesting weather...")
         self.weatherSource.getWeather() { (items: [WeatherItem]) in
             self.weatherItems = items
-            self.debug("Received weather data.")
+            self.logger.debug("Received weather data.")
             self.delegates.map { $0.didUpdateWeather(self.weatherItems) }
         }
     }
 
     func setPlaceToSearch(place: String) {
-        self.addressGeocodeToCurrentLocation(place)
+        self.location.addressGeocodeToCurrentLocation(place)
     }
 
     func setPlaceToCurrent() {
-        self.locationManager.startUpdatingLocation()
+        self.location.startUpdatingLocation()
     }
 
-    func info(message: String) {
-        println("INFO: \(message)")
+    //=== SC_LoggerInterface
+
+    func onInfo(message: String) {
         self.delegates.filter({$0.isActive()}).map({$0.displayInfo(message)})
     }
 
-    func error(message: String) {
-        println("ERROR: \(message)")
+    func onError(message: String) {
         self.delegates.filter({$0.isActive()}).map({$0.displayError(message)})
     }
 
-    func debug(message: String) {
-        println("DEBUG: \(message)")
+    //=== SC_LocationDelegate
+    
+    func didUpdatePlacemark(placemark: CLPlacemark?, error: String?) {
+        self.handlePlaceUpdate(placemark, error: error)
     }
 
     //=== NSTimer (weatherUpdateTimer)
@@ -259,69 +245,9 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate {
         self.updateWeather()
     }
 
-    //=== CLLocationManagerDelegate
-
-    // Called when the current location is successfully retrieved.
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        // Just use the first location for now.
-        self.locationManager.stopUpdatingLocation()
-        if !locations.isEmpty {
-            self.debug("Received \(locations.count) location(s) from location manager.")
-            if let location = locations[0] as? CLLocation {
-                self.reverseGeocodeLocation(location)
-            } else {
-                self.updatePlace(nil, error: "Received bad location from location manager.")
-            }
-        } else {
-            self.updatePlace(nil, error: "Received no locations from location manager.")
-        }
-    }
-
-    // Called when an error occurs while retrieving the current location.
-    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
-        self.state.placemark = nil
-        self.updatePlace(nil, error: error.localizedDescription)
-    }
-
     //=== Utility methods
 
-    // Curry with an error tag for use as a CLGeocoder lookup completion handler.
-    func geocoderCompletionHandler(tag: String) (placemarks: [AnyObject]!, error: NSError!) {
-        if placemarks != nil && placemarks.count > 0 {
-            self.debug("Received \(placemarks.count) placemark(s) from geocoder.")
-            // Only use the first placemark.
-            if let placemark = placemarks[0] as? CLPlacemark {
-                self.updatePlace(placemark, error: nil)
-            } else {
-                self.updatePlace(nil, error: "\(tag) error: bad placemark")
-            }
-        }
-        else {
-            if error != nil {
-                self.updatePlace(nil, error: "\(tag) error: \(error.description)")
-            } else {
-                self.updatePlace(nil, error: "\(tag) error: unknown error")
-            }
-        }
-    }
-
-    func addressGeocodeToCurrentLocation(placeName: String) {
-        self.state.placemark = nil
-        let geocoder = CLGeocoder()
-        self.debug("Geocoding address '\(placeName)'...")
-        geocoder.geocodeAddressString(placeName,
-            completionHandler: self.geocoderCompletionHandler("Lookup"))
-    }
-
-    func reverseGeocodeLocation(location: CLLocation) {
-        self.state.placemark = nil
-        let geocoder = CLGeocoder()
-        self.debug("Reverse geocoding location...")
-        geocoder.reverseGeocodeLocation(location,
-            completionHandler: self.geocoderCompletionHandler("Reverse"))
-    }
-
-    func updatePlace(placemark: CLPlacemark?, error: String?) {
+    func handlePlaceUpdate(placemark: CLPlacemark?, error: String?) {
         self.state.placemark = placemark
         var place: SharedDataPlace?
         if self.state.placemark != nil {
@@ -329,69 +255,15 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate {
         }
         self.delegates.map { $0.didUpdatePlace(place) }
         if let placemark = placemark {
-            self.debug("Set place to \(placemark.name)")
+            self.logger.debug("Set place to \(placemark.name)")
         } else {
             if let error = error {
-                self.error(error)
+                self.logger.error(error)
             } else {
-                self.error("Unknown error retrieving place.")
+                self.logger.error("Unknown error retrieving place.")
             }
         }
         self.weatherSource.location = placemark?.location
         self.updateWeather()
     }
 }
-
-let stateAbbreviations = [
-    "alabama": "AL",
-    "alaska": "AK",
-    "arizona": "AZ",
-    "arkansas": "AR",
-    "california": "CA",
-    "colorado": "CO",
-    "connecticut": "CT",
-    "delaware": "DE",
-    "district of columbia": "DC",
-    "florida": "FL",
-    "georgia": "GA",
-    "hawaii": "HI",
-    "idaho": "ID",
-    "illinois": "IL",
-    "indiana": "IN",
-    "iowa": "IA",
-    "kansas": "KS",
-    "kentucky": "KY",
-    "louisiana": "LA",
-    "maine": "ME",
-    "maryland": "MD",
-    "massachusetts": "MA",
-    "michigan": "MI",
-    "minnesota": "MN",
-    "mississippi": "MS",
-    "missouri": "MO",
-    "montana": "MT",
-    "nebraska": "NE",
-    "nevada": "NV",
-    "new hampshire": "NH",
-    "new jersey": "NJ",
-    "new mexico": "NM",
-    "new york": "NY",
-    "north carolina": "NC",
-    "north dakota": "ND",
-    "ohio": "OH",
-    "oklahoma": "OK",
-    "oregon": "OR",
-    "pennsylvania": "PA",
-    "rhode island": "RI",
-    "south carolina": "SC",
-    "south dakota": "SD",
-    "tennessee": "TN",
-    "texas": "TX",
-    "utah": "UT",
-    "vermont": "VT",
-    "virginia": "VA",
-    "washington": "WA",
-    "west virginia": "WV",
-    "wisconsin": "WI",
-    "wyoming": "WY",
-]

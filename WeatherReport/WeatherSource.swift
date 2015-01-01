@@ -17,10 +17,10 @@ protocol WeatherSource {
 
 class WeatherSourceBase : WeatherSource {
 
-    let logger: SharedLogger
+    let logger: SC_LoggerInterface
     var location: CLLocation?
 
-    init(logger: SharedLogger) {
+    init(logger: SC_LoggerInterface) {
         self.logger = logger
     }
 

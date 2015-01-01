@@ -24,6 +24,7 @@ class ViewController: UIViewController,
 
     // Initialized in viewDidLoad() - don't use before then!
     var sharedData: SharedDataInterface!
+    var logger: SC_LoggerInterface!
     var currentPlace: SharedDataPlace?
     var weatherItems: [WeatherItem] = []
     var viewIsActive = true;
@@ -35,9 +36,10 @@ class ViewController: UIViewController,
         let nib = UINib(nibName: "NameValueSymbolCell", bundle: nil)
         self.uiPropertyTable.registerNib(nib, forCellReuseIdentifier: "nameValueSymbolCell")
         self.sharedData = SharedDataSingleton.get(self)
+        self.logger = self.sharedData.logger
         self.sharedData.load()
         if let placemark = self.sharedData.state.placemark {
-            self.sharedData.info("Loaded location \(placemark.name).")
+            self.logger.info("Loaded location \(placemark.name).")
         } else {
             self.sharedData.setPlaceToCurrent()
         }
@@ -96,9 +98,9 @@ class ViewController: UIViewController,
         self.currentPlace = place
         if let place = place {
             self.uiSearchText.text = place.oneLineAddress
-            self.sharedData.info("Place: \(self.uiSearchText.text)")
+            self.logger.info("Place: \(self.uiSearchText.text)")
         } else {
-            self.sharedData.info("Place: (none)")
+            self.logger.info("Place: (none)")
         }
         self.sharedData.save()
         self.uiPropertyTable.reloadData()
@@ -136,7 +138,7 @@ class ViewController: UIViewController,
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = self.uiPropertyTable.dequeueReusableCellWithIdentifier("nameValueSymbolCell")
             as NameValueSymbolCell
-        cell.loadData(self.weatherItems[indexPath.row], logger: self.sharedData)
+        cell.loadData(self.weatherItems[indexPath.row], logger: self.logger)
         return cell
     }
 
@@ -146,7 +148,7 @@ class ViewController: UIViewController,
         if let url = NSURL(string: "http://forecast.io/") {
             UIApplication.sharedApplication().openURL(url)
         } else {
-            self.sharedData.error("NSURL creation failed for Forecast badge link.")
+            self.logger.error("NSURL creation failed for Forecast badge link.")
         }
     }
 
