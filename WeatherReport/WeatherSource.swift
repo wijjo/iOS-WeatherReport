@@ -26,6 +26,6 @@ class WeatherSourceBase : WeatherSource {
 
     func getWeather(completionHandler: (items: [WeatherItem]) -> ()) {
         completionHandler(items: [])
-        self.logger.error("Weather source implementation is incomplete.")
+        self.logger.log(.Error, "Weather source implementation is incomplete.")
     }
 }

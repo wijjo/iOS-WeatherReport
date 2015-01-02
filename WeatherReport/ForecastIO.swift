@@ -39,23 +39,23 @@ class ForecastIO : WeatherSourceBase {
         if !useCannedData {
             let session = NSURLSession.sharedSession()
             if let url = forecastURL() {
-                self.debug("URL: \(url.absoluteString)")
+                self.log(.Debug, "URL: \(url.absoluteString)")
                 var request = NSMutableURLRequest(URL: url)
                 request.HTTPMethod = "GET"
                 let task = session.dataTaskWithRequest(request) { data, response, error in
                     var items: [WeatherItem] = []
                     if let httpResponse = response as? NSHTTPURLResponse {
                         if let error = error {
-                            self.error(error.localizedDescription)
+                            self.log(.Error, error.localizedDescription)
                         } else if httpResponse.statusCode != 200 {
-                            self.error("HTTP error \(httpResponse.statusCode)")
+                            self.log(.Error, "HTTP error \(httpResponse.statusCode)")
                         } else {
                             if let result = NSJSONSerialization.JSONObjectWithData(data,
                                 options: NSJSONReadingOptions.allZeros, error: nil) as? NSDictionary {
                                 if let currently = result["currently"] as? NSDictionary {
                                     items = self.forecastItems(currently)
                                 } else {
-                                    self.error("failed to access current conditions")
+                                    self.log(.Error, "failed to access current conditions")
                                 }
                             }
                         }
@@ -65,7 +65,7 @@ class ForecastIO : WeatherSourceBase {
                 task.resume()
             }
             else {
-                self.error("failed to construct URL")
+                self.log(.Error, "failed to construct URL")
             }
         } else {
             let items = self.forecastItems(cannedData)
@@ -136,15 +136,7 @@ class ForecastIO : WeatherSourceBase {
         return nil
     }
 
-    func debug(message: String) {
-        self.logger.debug("Forecast.IO: \(message)")
-    }
-
-    func info(message: String) {
-        self.logger.info("Forecast.IO: \(message)")
-    }
-
-    func error(message: String) {
-        self.logger.error("Forecast.IO: \(message)")
+    func log(type: SCSCMessageType, _ message: String) {
+        self.logger.log(type, "Forecast.IO: \(message)")
     }
 }

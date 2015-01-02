@@ -107,8 +107,7 @@ class SharedDataPlace {
 protocol SharedDataDelegate {
     func didUpdatePlace(place: SharedDataPlace?)
     func didUpdateWeather(items: [WeatherItem])
-    func displayInfo(message: String)
-    func displayError(message: String)
+    func displayLog(type: SCSCMessageType, _ message: String)
     func isActive() -> Bool
 }
 
@@ -175,15 +174,15 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCS
         let userDefs = NSUserDefaults.standardUserDefaults()
         if let dataRaw: AnyObject = userDefs.objectForKey("SavedState") {
             if let dataDict = dataRaw as? NSDictionary {
-                self.logger.debug("Loaded saved data.")
+                self.logger.log(.Debug, "Loaded saved data.")
                 self.state = SavedState(fromPersistentData: dataDict)
                 self.weatherSource.location = self.state.placemark?.location
                 self.handlePlaceUpdate(self.state.placemark, error: nil)
             } else {
-                self.logger.info("Ignored bad saved state data.")
+                self.logger.log(.Warning, "Ignored bad saved state data.")
             }
         } else {
-            self.logger.info("Saved state data not found.")
+            self.logger.log(.Info, "Saved state data not found.")
         }
     }
 
@@ -208,10 +207,10 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCS
                 userInfo: nil,
                 repeats: true)
         }
-        self.logger.debug("Requesting weather...")
+        self.logger.log(.Debug, "Requesting weather...")
         self.weatherSource.getWeather() { (items: [WeatherItem]) in
             self.weatherItems = items
-            self.logger.debug("Received weather data.")
+            self.logger.log(.Debug, "Received weather data.")
             self.delegates.map { $0.didUpdateWeather(self.weatherItems) }
         }
     }
@@ -226,12 +225,8 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCS
 
     //=== SCSCLoggerInterface
 
-    func onInfo(message: String) {
-        self.delegates.filter({$0.isActive()}).map({$0.displayInfo(message)})
-    }
-
-    func onError(message: String) {
-        self.delegates.filter({$0.isActive()}).map({$0.displayError(message)})
+    func logger(type: SCSCMessageType, _ message: String) {
+        self.delegates.filter({$0.isActive()}).map({$0.displayLog(type, message)})
     }
 
     //=== SCSCLocationDelegate
@@ -265,12 +260,12 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCS
         }
         self.delegates.map { $0.didUpdatePlace(place) }
         if let placemark = placemark {
-            self.logger.debug("Set place to \(placemark.name)")
+            self.logger.log(.Debug, "Set place to \(placemark.name)")
         } else {
             if let error = error {
-                self.logger.error(error)
+                self.logger.log(.Error, error)
             } else {
-                self.logger.error("Unknown error retrieving place.")
+                self.logger.log(.Error, "Unknown error retrieving place.")
             }
         }
         self.weatherSource.location = placemark?.location

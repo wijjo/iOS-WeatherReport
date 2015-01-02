@@ -24,7 +24,7 @@ class NameValueSymbolCell : UITableViewCell {
         if let symbol = item.symbol {
             image = UIImage(named: symbol)
             if image == nil {
-                logger.error("Failed to load symbol image '\(symbol)'.")
+                logger.log(.Error, "Failed to load symbol image '\(symbol)'.")
             }
         }
         self.uiSymbol.image = image

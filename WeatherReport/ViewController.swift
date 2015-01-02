@@ -39,7 +39,7 @@ class ViewController: UIViewController,
         self.logger = self.sharedData.logger
         self.sharedData.load()
         if let placemark = self.sharedData.state.placemark {
-            self.logger.info("Loaded location \(placemark.name).")
+            self.logger.log(.Info, "Loaded location \(placemark.name).")
         } else {
             self.sharedData.setPlaceToCurrent()
         }
@@ -98,9 +98,9 @@ class ViewController: UIViewController,
         self.currentPlace = place
         if let place = place {
             self.uiSearchText.text = place.oneLineAddress
-            self.logger.info("Place: \(self.uiSearchText.text)")
+            self.logger.log(.Info, "Place: \(self.uiSearchText.text)")
         } else {
-            self.logger.info("Place: (none)")
+            self.logger.log(.Info, "Place: (none)")
         }
         self.sharedData.save()
         self.uiPropertyTable.reloadData()
@@ -118,10 +118,7 @@ class ViewController: UIViewController,
         }
     }
 
-    func displayInfo(message: String) {
-    }
-
-    func displayError(message: String) {
+    func displayLog(type: SCSCMessageType, _ message: String) {
     }
 
     func isActive() -> Bool {
@@ -148,7 +145,7 @@ class ViewController: UIViewController,
         if let url = NSURL(string: "http://forecast.io/") {
             UIApplication.sharedApplication().openURL(url)
         } else {
-            self.logger.error("NSURL creation failed for Forecast badge link.")
+            self.logger.log(.Error, "NSURL creation failed for Forecast badge link.")
         }
     }
 

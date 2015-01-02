@@ -16,6 +16,6 @@ class NOAA : WeatherSourceBase {
 
     override func getWeather(completionHandler: (items: [WeatherItem]) -> ()) {
         completionHandler(items: [])
-        self.logger.error("NOAA weather source is not implemented.")
+        self.logger.log(.Error, "NOAA weather source is not implemented.")
     }
 }
