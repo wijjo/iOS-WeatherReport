@@ -225,7 +225,7 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCS
 
     //=== SCSCLoggerInterface
 
-    func logger(type: SCSCMessageType, _ message: String) {
+    func scscLog(type: SCSCMessageType, _ message: String) {
         self.delegates.filter({$0.isActive()}).map({$0.displayLog(type, message)})
     }
 
