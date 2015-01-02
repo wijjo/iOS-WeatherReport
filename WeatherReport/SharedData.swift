@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 Steve Cooper. All rights reserved.
 //
 
+// UIKit is just used for alert.
+import UIKit
 import Foundation
 import CoreLocation
 
@@ -44,7 +46,7 @@ protocol SharedDataInterface {
 
     var state: SavedState { get }
     var weatherItems: [WeatherItem] { get }
-    var logger: SC_LoggerInterface! { get }
+    var logger: SCSCLoggerInterface! { get }
 
     //=== Methods
 
@@ -152,19 +154,19 @@ class SavedState: NSObject {
 /**
  * Shared data implementation class. Not for external consumption.
  */
-class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SC_LocationDelegate, SC_LoggerDelegate {
+class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCSCLocationDelegate, SCSCLoggerDelegate {
 
     var delegates = [SharedDataDelegate]()
     var weatherUpdateTimer: NSTimer?
     var weatherSource: WeatherSource!
 
-    var location: SC_Location!
+    var location: SCSCLocation!
 
     // Private constructor used only by SharedDataSingleton.get().
     private override init() {
         super.init()
-        self.logger = SC_Logger(delegate: self)
-        self.location = SC_Location(delegate: self, logger: self.logger)
+        self.logger = SCSCLogger(delegate: self)
+        self.location = SCSCLocation(delegate: self, logger: self.logger)
         self.weatherSource = ForecastIO(logger: self.logger)
     }
 
@@ -194,7 +196,7 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SC_
 
     var state = SavedState()
     var weatherItems: [WeatherItem] = []
-    let logger: SC_LoggerInterface!
+    let logger: SCSCLoggerInterface!
 
     func updateWeather() {
         // Start the timer on the first update.
@@ -222,7 +224,7 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SC_
         self.location.startUpdatingLocation()
     }
 
-    //=== SC_LoggerInterface
+    //=== SCSCLoggerInterface
 
     func onInfo(message: String) {
         self.delegates.filter({$0.isActive()}).map({$0.displayInfo(message)})
@@ -232,10 +234,18 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SC_
         self.delegates.filter({$0.isActive()}).map({$0.displayError(message)})
     }
 
-    //=== SC_LocationDelegate
+    //=== SCSCLocationDelegate
     
-    func didUpdatePlacemark(placemark: CLPlacemark?, error: String?) {
-        self.handlePlaceUpdate(placemark, error: error)
+    // Either placemark or error is non-nil, indicating success or failure
+    func scscLocation(placemarkUpdated: CLPlacemark?, error: String?) {
+        self.handlePlaceUpdate(placemarkUpdated, error: error)
+    }
+
+    // Called when another type of error occurs.
+    func scscLocation(otherError: String) {
+        let alert = UIAlertView(title: "Location Error", message: otherError,
+            delegate: nil, cancelButtonTitle: "Close")
+        alert.show()
     }
 
     //=== NSTimer (weatherUpdateTimer)

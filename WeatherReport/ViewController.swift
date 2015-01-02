@@ -24,7 +24,7 @@ class ViewController: UIViewController,
 
     // Initialized in viewDidLoad() - don't use before then!
     var sharedData: SharedDataInterface!
-    var logger: SC_LoggerInterface!
+    var logger: SCSCLoggerInterface!
     var currentPlace: SharedDataPlace?
     var weatherItems: [WeatherItem] = []
     var viewIsActive = true;
