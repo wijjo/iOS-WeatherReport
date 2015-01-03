@@ -234,6 +234,7 @@ class SharedData : NSObject, SharedDataInterface, CLLocationManagerDelegate, SCS
     // Either placemark or error is non-nil, indicating success or failure
     func scscLocation(placemarkUpdated: CLPlacemark?, error: String?) {
         self.handlePlaceUpdate(placemarkUpdated, error: error)
+        self.location.stopUpdatingLocation()
     }
 
     // Called when another type of error occurs.
